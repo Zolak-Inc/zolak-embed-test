@@ -27,7 +27,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest   # or pin it: e.g. 1.2.0
+          bun-version: latest
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -41,7 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './dist'          # ← Must be dist!
 
       - name: Deploy
         id: deployment

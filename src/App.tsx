@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ControlPanel } from './ControlPanel'
 import './App.css'
 
@@ -157,6 +157,10 @@ function App() {
   const [ar, setAr] = useState(true)
   const [popup, setPopup] = useState<string | null>(null)
   const [initialized, setInitialized] = useState<Record<Group, boolean>>({ configurator: false, sandbox: false })
+  const sandboxRef = useRef<HTMLDivElement>(null)
+  const configuratorRef = useRef<HTMLDivElement>(null)
+  const [sandboxSize, setSandboxSize] = useState({ width: 0, height: 0 })
+  const [configuratorSize, setConfiguratorSize] = useState({ width: 0, height: 0 })
 
   useEffect(() => {
     let active = true
@@ -165,6 +169,26 @@ function App() {
       .catch(() => { if (active) {/* failed */} })
     return () => { active = false }
   }, [cdnUrl])
+
+  useEffect(() => {
+    if (!sandboxRef.current) return
+    const observer = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect
+      setSandboxSize({ width: Math.round(width), height: Math.round(height) })
+    })
+    observer.observe(sandboxRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!configuratorRef.current) return
+    const observer = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect
+      setConfiguratorSize({ width: Math.round(width), height: Math.round(height) })
+    })
+    observer.observe(configuratorRef.current)
+    return () => observer.disconnect()
+  }, [])
 
   const handle = useCallback(
     async (method: string, group: Group) => {
@@ -224,20 +248,22 @@ function App() {
       />
 
       <section className="workspace-frame">
-        <div className="panel sandbox-panel">
+        <div className="panel sandbox-panel" >
           <div className="panel-header">
             <span className="badge">Sandbox</span>
             {initialized.sandbox && <span className="badge active">Active</span>}
+            <span className="badge size">{sandboxSize.width}×{sandboxSize.height}</span>
           </div>
-          <div id="zolak-sandbox-instance" className="render-target" />
+          <div id="zolak-sandbox-instance" className="render-target" ref={sandboxRef}/>
           <MethodBar methods={sandboxMethods} group="sandbox" onCall={handle} />
         </div>
-        <div className="panel configurator-panel">
+        <div className="panel configurator-panel" >
           <div className="panel-header">
             <span className="badge">Configurator</span>
             {initialized.configurator && <span className="badge active">Active</span>}
+            <span className="badge size">{configuratorSize.width}×{configuratorSize.height}</span>
           </div>
-          <div id="zolak-instance" className="render-target" />
+          <div id="zolak-instance" className="render-target" ref={configuratorRef}/>
           <MethodBar methods={configuratorMethods} group="configurator" onCall={handle} />
         </div>
       </section>

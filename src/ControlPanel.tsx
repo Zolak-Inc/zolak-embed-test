@@ -46,7 +46,10 @@ export function ControlPanel({ token, sku, sidebar, sidebarPosition, ar, cdnUrl,
       <div className="controls-body">
         <div className="controls-fields">
           <label className="field">
-            <span>CDN script</span>
+
+              <img src="../public/zolakIcon.svg" alt="Zolak logo" className="cdn-logo" />
+              <span>CDN script</span>
+
             <div className="field-row">
               <input
                 list="cdn-list"

@@ -65,6 +65,8 @@ async function callApi(
   sidebar: boolean,
   sidebarPosition: 'left' | 'right',
   ar: boolean,
+  rtl: boolean,
+  language: string,
 ): Promise<{ message: string; initialized: Record<Group, boolean> }> {
   function getApp(): Promise<any> {
     if (group === 'configurator') {
@@ -87,13 +89,27 @@ async function callApi(
     case 'InitConfigurator': {
       const api = (window as any).ZolakAPI
       if (!api) throw new Error('ZolakAPI not loaded')
-      api.initConfigurator(token, { container: CONTAINER, product: sku, modal: false, sidebar, sidebarPosition, ar })
+      api.initConfigurator(token, { 
+        container: CONTAINER, 
+        product: sku, 
+        modal: false, 
+        sidebar, 
+        sidebarPosition, 
+        ar,
+        rtl,
+        language
+      })
       return { message: `initConfigurator("${token}", "${sku}")`, initialized: { ...initialized, configurator: true } }
     }
     case 'InitShowroom': {
       const api = (window as any).ZolakAPI
       if (!api) throw new Error('ZolakAPI not loaded')
-      api.initShowroom(token, { container: SHOWROOM_CONTAINER, sidebar: false })
+      api.initShowroom(token, { 
+        container: SHOWROOM_CONTAINER, 
+        sidebar: false,
+        rtl,
+        language
+      })
       return { message: `initShowroom("${token}")`, initialized: { ...initialized, sandbox: true } }
     }
     case 'App.destroy': {
@@ -155,6 +171,8 @@ function App() {
   const [sidebar, setSidebar] = useState(true)
   const [sidebarPosition, setSidebarPosition] = useState<'left' | 'right'>('left')
   const [ar, setAr] = useState(true)
+  const [rtl, setRtl] = useState(false)
+  const [language, setLanguage] = useState('en')
   const [popup, setPopup] = useState<string | null>(null)
   const [initialized, setInitialized] = useState<Record<Group, boolean>>({ configurator: false, sandbox: false })
   const sandboxRef = useRef<HTMLDivElement>(null)
@@ -203,7 +221,7 @@ function App() {
       }
       setPopup(`Calling ${group}.${method}…`)
       try {
-        const result = await callApi(method, group, token, sku, initialized, sidebar, sidebarPosition, ar)
+        const result = await callApi(method, group, token, sku, initialized, sidebar, sidebarPosition, ar, rtl, language)
         setInitialized(result.initialized)
         setPopup(`✓ ${result.message}`)
       } catch (e: any) {
@@ -213,15 +231,25 @@ function App() {
         }
       }
     },
-    [token, sku, initialized, sidebar, sidebarPosition, ar],
+    [token, sku, initialized, sidebar, sidebarPosition, ar, rtl, language],
   )
 
-  const handleUpdate = useCallback(async (newToken: string, newSku: string, newSidebar: boolean, newSidebarPosition: 'left' | 'right', newAr: boolean) => {
+  const handleUpdate = useCallback(async (
+    newToken: string, 
+    newSku: string, 
+    newSidebar: boolean, 
+    newSidebarPosition: 'left' | 'right', 
+    newAr: boolean,
+    newRtl: boolean,
+    newLanguage: string
+  ) => {
     setToken(newToken)
     setSku(newSku)
     setSidebar(newSidebar)
     setSidebarPosition(newSidebarPosition)
     setAr(newAr)
+    setRtl(newRtl)
+    setLanguage(newLanguage)
     await destroyApp((window as any).ZolakConfigurator, CONTAINER)
     await destroyApp((window as any).ZolakShowroom, SHOWROOM_CONTAINER)
     setInitialized({ configurator: false, sandbox: false })
@@ -242,6 +270,8 @@ function App() {
         sidebar={sidebar}
         sidebarPosition={sidebarPosition}
         ar={ar}
+        rtl={rtl}
+        language={language}
         cdnUrl={cdnUrl}
         onUpdate={handleUpdate}
         onApplyCdn={handleApplyCdn}
@@ -274,7 +304,6 @@ function App() {
             <p className="popup-title">Action</p>
             <p className="popup-message">{popup}</p>
             <div className="popup-footer">
-
               <button type="button" onClick={() => setPopup(null)}>Close</button>
             </div>
           </div>

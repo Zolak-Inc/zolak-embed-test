@@ -15,12 +15,10 @@
 }
 
 .controls-panel{
-    width: fit-content;
+    width: 400px;
 }
-.workspace-frame {
-  flex: 1 1 400px;
-  min-width: 0;
-}
+
+
 
 .controls-panel {
   padding: 14px;
@@ -68,6 +66,7 @@
 
 .controls-toggles {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   align-items: center;
 }

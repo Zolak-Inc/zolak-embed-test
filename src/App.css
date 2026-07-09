@@ -14,17 +14,40 @@
   background: linear-gradient(rgba(245, 245, 239, 1), rgba(245, 245, 239, 1));
 }
 
-.controls-panel{
-    width: 400px;
-}
-
-
-
 .controls-panel {
+  width: 400px;
   padding: 14px;
   border: 1px solid #d8dbe2;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.controls-panel--collapsed {
+  width: auto;
+}
+
+.controls-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #cfd6e4;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.collapse-btn:hover {
+  color: #7E67A8;
+  border: 1px solid #7E67A8;
 }
 
 .controls-body {

@@ -179,6 +179,7 @@ function App() {
   const configuratorRef = useRef<HTMLDivElement>(null)
   const [sandboxSize, setSandboxSize] = useState({ width: 0, height: 0 })
   const [configuratorSize, setConfiguratorSize] = useState({ width: 0, height: 0 })
+  const [panelCollapsed, setPanelCollapsed] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -275,6 +276,8 @@ function App() {
         cdnUrl={cdnUrl}
         onUpdate={handleUpdate}
         onApplyCdn={handleApplyCdn}
+        collapsed={panelCollapsed}
+        onToggleCollapse={() => setPanelCollapsed((c) => !c)}
       />
 
       <section className="workspace-frame">

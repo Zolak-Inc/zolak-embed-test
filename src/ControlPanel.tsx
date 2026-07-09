@@ -1,5 +1,9 @@
-import { Check } from 'lucide-react'
+import { Check, Maximize2, Minimize2 } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from './components/Button'
+import { ToggleSwitch } from './components/ToggleSwitch'
+import { SegmentedControl } from './components/SegmentedControl'
+import { LanguageSelect } from './components/LanguageSelect'
 
 const CDN_BASE = 'https://cdn.zolak.tech/'
 const CDN_PATHS = [
@@ -11,8 +15,6 @@ const CDN_PATHS = [
   'embed/embed.1.0.0.staging.js',
 ]
 const DEFAULT_CDN = CDN_BASE + 'embed/embed.dev.js'
-const defaultToken = ''
-const defaultSku = ''
 
 const LANGUAGES = [
   { value: 'en', label: 'English' },
@@ -34,144 +36,128 @@ interface ControlPanelProps {
   rtl: boolean
   language: string
   cdnUrl: string
-  onUpdate: (token: string, sku: string, sidebar: boolean, sidebarPosition: 'left' | 'right', ar: boolean, rtl: boolean, language: string) => void
+  onTokenChange: (value: string) => void
+  onSkuChange: (value: string) => void
+  onSidebarChange: (value: boolean) => void
+  onSidebarPositionChange: (value: 'left' | 'right') => void
+  onArChange: (value: boolean) => void
+  onRtlChange: (value: boolean) => void
+  onLanguageChange: (value: string) => void
+  onUpdate: () => void
   onApplyCdn: (cdnUrl: string) => void
+  collapsed: boolean
+  onToggleCollapse: () => void
 }
 
-export function ControlPanel({ 
-  token, 
-  sku, 
-  sidebar, 
-  sidebarPosition, 
-  ar, 
-  rtl, 
+export function ControlPanel({
+  token,
+  sku,
+  sidebar,
+  sidebarPosition,
+  ar,
+  rtl,
   language,
-  cdnUrl, 
-  onUpdate, 
-  onApplyCdn 
+  cdnUrl,
+  onTokenChange,
+  onSkuChange,
+  onSidebarChange,
+  onSidebarPositionChange,
+  onArChange,
+  onRtlChange,
+  onLanguageChange,
+  onUpdate,
+  onApplyCdn,
+  collapsed,
+  onToggleCollapse
 }: ControlPanelProps) {
   const [cdnInput, setCdnInput] = useState(cdnUrl || DEFAULT_CDN)
-  const [tokenInput, setTokenInput] = useState(token)
-  const [skuInput, setSkuInput] = useState(sku)
-  const [sidebarInput, setSidebarInput] = useState(sidebar)
-  const [sidebarPositionInput, setSidebarPositionInput] = useState(sidebarPosition)
-  const [arInput, setArInput] = useState(ar)
-  const [rtlInput, setRtlInput] = useState(rtl)
-  const [languageInput, setLanguageInput] = useState(language || 'en')
-
-  const handleUpdate = () => {
-    onUpdate(
-      tokenInput.trim() || defaultToken, 
-      skuInput.trim() || defaultSku, 
-      sidebarInput, 
-      sidebarPositionInput, 
-      arInput,
-      rtlInput,
-      languageInput
-    )
-  }
 
   const handleApplyCdn = () => {
     onApplyCdn(cdnInput.trim() || DEFAULT_CDN)
   }
 
   return (
-    <section className="controls-panel">
-      <div className="controls-body">
-        <div className="controls-fields">
-          <label className="field">
-            <img src="../public/zolakIcon.svg" alt="Zolak logo" className="cdn-logo" />
-            <span>CDN script</span>
-            <div className="field-row">
-              <input
-                list="cdn-list"
-                value={cdnInput}
-                onChange={(e) => setCdnInput(e.target.value)}
-              />
-            </div>
-            <datalist id="cdn-list">
-              {CDN_PATHS.map((p) => (
-                <option key={p} value={CDN_BASE + p} />
-              ))}
-            </datalist>
-            <div className="field-row cdn-actions">
-              <button type="button" className="btn-action" onClick={handleApplyCdn}>
-                Apply CDN
-              </button>
-            </div>
-          </label>
-          <label className="field">
-            <span>Company token</span>
-            <div className="field-row">
-              <input value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} />
-              <Check size={20} className={`tick-icon${token.trim() && tokenInput.trim() === token ? '' : ' tick-icon--hidden'}`} />
-            </div>
-          </label>
-          <label className="field">
-            <span>SKU</span>
-            <div className="field-row">
-              <input value={skuInput} onChange={(e) => setSkuInput(e.target.value)} />
-              <Check size={20} className={`tick-icon${sku.trim() && skuInput.trim() === sku ? '' : ' tick-icon--hidden'}`} />
-            </div>
-          </label>
-        </div>
-        <div className="controls-toggles">
-          <label className="toggle">
-            <input type="checkbox" checked={sidebarInput} onChange={(e) => setSidebarInput(e.target.checked)} />
-            <span className="toggle-slider" />
-            Sidebar
-            <Check size={16} className={`tick-icon${sidebarInput === sidebar ? '' : ' tick-icon--hidden'}`} />
-          </label>
-          <div className="segmented-toggle">
-            <span className="segmented-label">Pos</span>
-            <button
-              type="button"
-              className={`segmented-btn${sidebarPositionInput === 'left' ? ' active' : ''}`}
-              onClick={() => setSidebarPositionInput('left')}
-            >
-              Left
-            </button>
-            <button
-              type="button"
-              className={`segmented-btn${sidebarPositionInput === 'right' ? ' active' : ''}`}
-              onClick={() => setSidebarPositionInput('right')}
-            >
-              Right
-            </button>
-            <Check size={16} className={`tick-icon${sidebarPositionInput === sidebarPosition ? '' : ' tick-icon--hidden'}`} />
-          </div>
-          <label className="toggle">
-            <input type="checkbox" checked={arInput} onChange={(e) => setArInput(e.target.checked)} />
-            <span className="toggle-slider" />
-            AR
-            <Check size={16} className={`tick-icon${arInput === ar ? '' : ' tick-icon--hidden'}`} />
-          </label>
-          <label className="toggle">
-            <input type="checkbox" checked={rtlInput} onChange={(e) => setRtlInput(e.target.checked)} />
-            <span className="toggle-slider" />
-            RTL
-            <Check size={16} className={`tick-icon${rtlInput === rtl ? '' : ' tick-icon--hidden'}`} />
-          </label>
-          <div className="language-select">
-            <span className="language-label">Language</span>
-            <select 
-              value={languageInput} 
-              onChange={(e) => setLanguageInput(e.target.value)}
-              className="language-dropdown"
-            >
-              {LANGUAGES.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
-            <Check size={16} className={`tick-icon${languageInput === language ? '' : ' tick-icon--hidden'}`} />
-          </div>
-        </div>
-        <button type="button" className="btn-action" onClick={handleUpdate}>
-          Update
+    <section className={`controls-panel${collapsed ? ' controls-panel--collapsed' : ''}`}>
+      <div className="controls-header">
+        {!collapsed && <img src="/zolakIcon.svg" alt="Zolak logo" className="cdn-logo" /> }
+        <button type="button" className="collapse-btn" onClick={onToggleCollapse}>
+          {collapsed ? <Maximize2 size={15} /> : <Minimize2 size={15} />}
         </button>
       </div>
+      {!collapsed && (
+        <div className="controls-body">
+          <div className="controls-fields">
+            <label className="field">
+              <span>CDN script</span>
+              <div className="field-row">
+                <input
+                  list="cdn-list"
+                  value={cdnInput}
+                  onChange={(e) => setCdnInput(e.target.value)}
+                />
+              </div>
+              <datalist id="cdn-list">
+                {CDN_PATHS.map((p) => (
+                  <option key={p} value={CDN_BASE + p} />
+                ))}
+              </datalist>
+              <div className="field-row cdn-actions">
+                <Button onClick={handleApplyCdn}>
+                  Apply CDN
+                </Button>
+              </div>
+            </label>
+            <label className="field">
+              <span>Company token</span>
+              <div className="field-row">
+                <input value={token} onChange={(e) => onTokenChange(e.target.value)} />
+                <Check size={20} className="tick-icon" />
+              </div>
+            </label>
+            <label className="field">
+              <span>SKU</span>
+              <div className="field-row">
+                <input value={sku} onChange={(e) => onSkuChange(e.target.value)} />
+                <Check size={20} className="tick-icon" />
+              </div>
+            </label>
+          </div>
+          <div className="controls-toggles">
+            <ToggleSwitch
+              checked={sidebar}
+              onChange={onSidebarChange}
+              label="Sidebar"
+            />
+            <SegmentedControl
+              label=""
+              options={[
+                { value: 'left', label: 'Left' },
+                { value: 'right', label: 'Right' },
+              ]}
+              value={sidebarPosition}
+              onChange={onSidebarPositionChange}
+            />
+            <ToggleSwitch
+              checked={ar}
+              onChange={onArChange}
+              label="AR"
+            />
+            <ToggleSwitch
+              checked={rtl}
+              onChange={onRtlChange}
+              label="RTL"
+            />
+            <LanguageSelect
+              value={language}
+              onChange={onLanguageChange}
+              languages={LANGUAGES}
+            />
+          </div>
+          <Button onClick={onUpdate}>
+            Update
+          </Button>
+        </div>
+      )}
     </section>
   )
 }

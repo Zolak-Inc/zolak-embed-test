@@ -179,6 +179,25 @@ function App() {
   const configuratorRef = useRef<HTMLDivElement>(null)
   const [sandboxSize, setSandboxSize] = useState({ width: 0, height: 0 })
   const [configuratorSize, setConfiguratorSize] = useState({ width: 0, height: 0 })
+  const [panelCollapsed, setPanelCollapsed] = useState(false)
+
+  const tokenRef = useRef(token)
+  const skuRef = useRef(sku)
+  const sidebarRef = useRef(sidebar)
+  const sidebarPositionRef = useRef(sidebarPosition)
+  const arRef = useRef(ar)
+  const rtlRef = useRef(rtl)
+  const languageRef = useRef(language)
+  const initializedRef = useRef(initialized)
+
+  tokenRef.current = token
+  skuRef.current = sku
+  sidebarRef.current = sidebar
+  sidebarPositionRef.current = sidebarPosition
+  arRef.current = ar
+  rtlRef.current = rtl
+  languageRef.current = language
+  initializedRef.current = initialized
 
   useEffect(() => {
     let active = true
@@ -210,18 +229,27 @@ function App() {
 
   const handle = useCallback(
     async (method: string, group: Group) => {
-      if (!token.trim()) {
+      const t = tokenRef.current
+      const s = skuRef.current
+      const sb = sidebarRef.current
+      const sp = sidebarPositionRef.current
+      const a = arRef.current
+      const r = rtlRef.current
+      const l = languageRef.current
+      const init = initializedRef.current
+
+      if (!t.trim()) {
         setPopup('Enter company token first')
         return
       }
       const needsSku = !['App.destroy','App.show','Cart.list','Product.item','Interiors.item','InitShowroom'].includes(method)
-      if (needsSku && !sku.trim()) {
+      if (needsSku && !s.trim()) {
         setPopup('Enter SKU first')
         return
       }
       setPopup(`Calling ${group}.${method}…`)
       try {
-        const result = await callApi(method, group, token, sku, initialized, sidebar, sidebarPosition, ar, rtl, language)
+        const result = await callApi(method, group, t, s, init, sb, sp, a, r, l)
         setInitialized(result.initialized)
         setPopup(`✓ ${result.message}`)
       } catch (e: any) {
@@ -231,29 +259,22 @@ function App() {
         }
       }
     },
-    [token, sku, initialized, sidebar, sidebarPosition, ar, rtl, language],
+    [],
   )
 
-  const handleUpdate = useCallback(async (
-    newToken: string, 
-    newSku: string, 
-    newSidebar: boolean, 
-    newSidebarPosition: 'left' | 'right', 
-    newAr: boolean,
-    newRtl: boolean,
-    newLanguage: string
-  ) => {
-    setToken(newToken)
-    setSku(newSku)
-    setSidebar(newSidebar)
-    setSidebarPosition(newSidebarPosition)
-    setAr(newAr)
-    setRtl(newRtl)
-    setLanguage(newLanguage)
+  const handleUpdate = useCallback(async () => {
     await destroyApp((window as any).ZolakConfigurator, CONTAINER)
     await destroyApp((window as any).ZolakShowroom, SHOWROOM_CONTAINER)
     setInitialized({ configurator: false, sandbox: false })
   }, [])
+
+  const handleTokenChange = useCallback((v: string) => setToken(v), [])
+  const handleSkuChange = useCallback((v: string) => setSku(v), [])
+  const handleSidebarChange = useCallback((v: boolean) => setSidebar(v), [])
+  const handleSidebarPositionChange = useCallback((v: 'left' | 'right') => setSidebarPosition(v), [])
+  const handleArChange = useCallback((v: boolean) => setAr(v), [])
+  const handleRtlChange = useCallback((v: boolean) => setRtl(v), [])
+  const handleLanguageChange = useCallback((v: string) => setLanguage(v), [])
 
   const handleApplyCdn = useCallback(async (newCdn: string) => {
     await destroyApp((window as any).ZolakConfigurator, CONTAINER)
@@ -273,8 +294,17 @@ function App() {
         rtl={rtl}
         language={language}
         cdnUrl={cdnUrl}
+        onTokenChange={handleTokenChange}
+        onSkuChange={handleSkuChange}
+        onSidebarChange={handleSidebarChange}
+        onSidebarPositionChange={handleSidebarPositionChange}
+        onArChange={handleArChange}
+        onRtlChange={handleRtlChange}
+        onLanguageChange={handleLanguageChange}
         onUpdate={handleUpdate}
         onApplyCdn={handleApplyCdn}
+        collapsed={panelCollapsed}
+        onToggleCollapse={() => setPanelCollapsed((c) => !c)}
       />
 
       <section className="workspace-frame">

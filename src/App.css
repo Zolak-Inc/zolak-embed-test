@@ -107,6 +107,36 @@
   background: #f1f5f9;
 }
 
+.language-select {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.language-label {
+  margin-right: 4px;
+}
+
+.language-dropdown {
+  height: 26px;
+  padding: 0 10px 0 8px;
+  border: 1px solid #cfd6e4;
+  background: #fff;
+  color: #475569;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.language-dropdown:hover {
+  background: #f1f5f9;
+}
+
 .toggle {
   display: flex;
   align-items: center;

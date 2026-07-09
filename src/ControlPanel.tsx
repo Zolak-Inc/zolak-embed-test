@@ -1,5 +1,9 @@
 import { Check } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from './components/Button'
+import { ToggleSwitch } from './components/ToggleSwitch'
+import { SegmentedControl } from './components/SegmentedControl'
+import { LanguageSelect } from './components/LanguageSelect'
 
 const CDN_BASE = 'https://cdn.zolak.tech/'
 const CDN_PATHS = [
@@ -95,9 +99,9 @@ export function ControlPanel({
               ))}
             </datalist>
             <div className="field-row cdn-actions">
-              <button type="button" className="btn-action" onClick={handleApplyCdn}>
+              <Button onClick={handleApplyCdn}>
                 Apply CDN
-              </button>
+              </Button>
             </div>
           </label>
           <label className="field">
@@ -116,61 +120,44 @@ export function ControlPanel({
           </label>
         </div>
         <div className="controls-toggles">
-          <label className="toggle">
-            <input type="checkbox" checked={sidebarInput} onChange={(e) => setSidebarInput(e.target.checked)} />
-            <span className="toggle-slider" />
-            Sidebar
-            <Check size={16} className={`tick-icon${sidebarInput === sidebar ? '' : ' tick-icon--hidden'}`} />
-          </label>
-          <div className="segmented-toggle">
-            <span className="segmented-label">Pos</span>
-            <button
-              type="button"
-              className={`segmented-btn${sidebarPositionInput === 'left' ? ' active' : ''}`}
-              onClick={() => setSidebarPositionInput('left')}
-            >
-              Left
-            </button>
-            <button
-              type="button"
-              className={`segmented-btn${sidebarPositionInput === 'right' ? ' active' : ''}`}
-              onClick={() => setSidebarPositionInput('right')}
-            >
-              Right
-            </button>
-            <Check size={16} className={`tick-icon${sidebarPositionInput === sidebarPosition ? '' : ' tick-icon--hidden'}`} />
-          </div>
-          <label className="toggle">
-            <input type="checkbox" checked={arInput} onChange={(e) => setArInput(e.target.checked)} />
-            <span className="toggle-slider" />
-            AR
-            <Check size={16} className={`tick-icon${arInput === ar ? '' : ' tick-icon--hidden'}`} />
-          </label>
-          <label className="toggle">
-            <input type="checkbox" checked={rtlInput} onChange={(e) => setRtlInput(e.target.checked)} />
-            <span className="toggle-slider" />
-            RTL
-            <Check size={16} className={`tick-icon${rtlInput === rtl ? '' : ' tick-icon--hidden'}`} />
-          </label>
-          <div className="language-select">
-            <span className="language-label">Language</span>
-            <select 
-              value={languageInput} 
-              onChange={(e) => setLanguageInput(e.target.value)}
-              className="language-dropdown"
-            >
-              {LANGUAGES.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
-            <Check size={16} className={`tick-icon${languageInput === language ? '' : ' tick-icon--hidden'}`} />
-          </div>
+          <ToggleSwitch
+            checked={sidebarInput}
+            onChange={setSidebarInput}
+            label="Sidebar"
+            applied={sidebarInput === sidebar}
+          />
+          <SegmentedControl
+            label="Pos"
+            options={[
+              { value: 'left', label: 'Left' },
+              { value: 'right', label: 'Right' },
+            ]}
+            value={sidebarPositionInput}
+            onChange={setSidebarPositionInput}
+            applied={sidebarPositionInput === sidebarPosition}
+          />
+          <ToggleSwitch
+            checked={arInput}
+            onChange={setArInput}
+            label="AR"
+            applied={arInput === ar}
+          />
+          <ToggleSwitch
+            checked={rtlInput}
+            onChange={setRtlInput}
+            label="RTL"
+            applied={rtlInput === rtl}
+          />
+          <LanguageSelect
+            value={languageInput}
+            onChange={setLanguageInput}
+            applied={languageInput === language}
+            languages={LANGUAGES}
+          />
         </div>
-        <button type="button" className="btn-action" onClick={handleUpdate}>
+        <Button onClick={handleUpdate}>
           Update
-        </button>
+        </Button>
       </div>
     </section>
   )

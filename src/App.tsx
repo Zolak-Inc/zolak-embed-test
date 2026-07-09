@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { ControlPanel } from './ControlPanel'
 import './App.css'
 
@@ -89,12 +89,12 @@ async function callApi(
     case 'InitConfigurator': {
       const api = (window as any).ZolakAPI
       if (!api) throw new Error('ZolakAPI not loaded')
-      api.initConfigurator(token, { 
-        container: CONTAINER, 
-        product: sku, 
-        modal: false, 
-        sidebar, 
-        sidebarPosition, 
+      api.initConfigurator(token, {
+        container: CONTAINER,
+        product: sku,
+        modal: false,
+        sidebar,
+        sidebarPosition,
         ar,
         rtl,
         language
@@ -104,8 +104,8 @@ async function callApi(
     case 'InitShowroom': {
       const api = (window as any).ZolakAPI
       if (!api) throw new Error('ZolakAPI not loaded')
-      api.initShowroom(token, { 
-        container: SHOWROOM_CONTAINER, 
+      api.initShowroom(token, {
+        container: SHOWROOM_CONTAINER,
         sidebar: false,
         rtl,
         language
@@ -181,23 +181,7 @@ function App() {
   const [configuratorSize, setConfiguratorSize] = useState({ width: 0, height: 0 })
   const [panelCollapsed, setPanelCollapsed] = useState(false)
 
-  const tokenRef = useRef(token)
-  const skuRef = useRef(sku)
-  const sidebarRef = useRef(sidebar)
-  const sidebarPositionRef = useRef(sidebarPosition)
-  const arRef = useRef(ar)
-  const rtlRef = useRef(rtl)
-  const languageRef = useRef(language)
-  const initializedRef = useRef(initialized)
 
-  tokenRef.current = token
-  skuRef.current = sku
-  sidebarRef.current = sidebar
-  sidebarPositionRef.current = sidebarPosition
-  arRef.current = ar
-  rtlRef.current = rtl
-  languageRef.current = language
-  initializedRef.current = initialized
 
   useEffect(() => {
     let active = true
@@ -229,27 +213,20 @@ function App() {
 
   const handle = useCallback(
     async (method: string, group: Group) => {
-      const t = tokenRef.current
-      const s = skuRef.current
-      const sb = sidebarRef.current
-      const sp = sidebarPositionRef.current
-      const a = arRef.current
-      const r = rtlRef.current
-      const l = languageRef.current
-      const init = initializedRef.current
 
-      if (!t.trim()) {
+
+      if (!token.trim()) {
         setPopup('Enter company token first')
         return
       }
       const needsSku = !['App.destroy','App.show','Cart.list','Product.item','Interiors.item','InitShowroom'].includes(method)
-      if (needsSku && !s.trim()) {
+      if (needsSku && !sku.trim()) {
         setPopup('Enter SKU first')
         return
       }
       setPopup(`Calling ${group}.${method}…`)
       try {
-        const result = await callApi(method, group, t, s, init, sb, sp, a, r, l)
+        const result = await callApi(method, group, token, sku, initialized, sidebar, sidebarPosition, ar, rtl, language)
         setInitialized(result.initialized)
         setPopup(`✓ ${result.message}`)
       } catch (e: any) {
@@ -259,7 +236,7 @@ function App() {
         }
       }
     },
-    [],
+    [token, sku, sidebar, sidebarPosition, ar, rtl, language, initialized],
   )
 
   const handleUpdate = useCallback(async () => {

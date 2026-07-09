@@ -1,4 +1,3 @@
-import { Check } from 'lucide-react'
 
 interface Option<T extends string> {
   value: T
@@ -10,7 +9,6 @@ interface SegmentedControlProps<T extends string> {
   options: Option<T>[]
   value: T
   onChange: (value: T) => void
-  applied?: boolean
 }
 
 export function SegmentedControl<T extends string>({ label, options, value, onChange, applied = true }: SegmentedControlProps<T>) {
@@ -27,7 +25,6 @@ export function SegmentedControl<T extends string>({ label, options, value, onCh
           {opt.label}
         </button>
       ))}
-      <Check size={16} className={`tick-icon${applied ? '' : ' tick-icon--hidden'}`} />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { Check, Maximize2, Minimize2 } from 'lucide-react'
+import { Maximize2, Minimize2 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from './components/Button'
 import { ToggleSwitch } from './components/ToggleSwitch'
@@ -111,14 +111,12 @@ export function ControlPanel({
               <span>Company token</span>
               <div className="field-row">
                 <input value={token} onChange={(e) => onTokenChange(e.target.value)} />
-                <Check size={20} className="tick-icon" />
               </div>
             </label>
             <label className="field">
               <span>SKU</span>
               <div className="field-row">
                 <input value={sku} onChange={(e) => onSkuChange(e.target.value)} />
-                <Check size={20} className="tick-icon" />
               </div>
             </label>
           </div>

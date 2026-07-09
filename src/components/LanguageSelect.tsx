@@ -1,4 +1,3 @@
-import { Check } from 'lucide-react'
 
 interface Language {
   value: string
@@ -8,11 +7,10 @@ interface Language {
 interface LanguageSelectProps {
   value: string
   onChange: (value: string) => void
-  applied?: boolean
   languages: Language[]
 }
 
-export function LanguageSelect({ value, onChange, applied = true, languages }: LanguageSelectProps) {
+export function LanguageSelect({ value, onChange,  languages }: LanguageSelectProps) {
   return (
     <div className="language-select">
       <span className="language-label">Language</span>
@@ -23,7 +21,6 @@ export function LanguageSelect({ value, onChange, applied = true, languages }: L
           </option>
         ))}
       </select>
-      <Check size={16} className={`tick-icon${applied ? '' : ' tick-icon--hidden'}`} />
     </div>
   )
 }

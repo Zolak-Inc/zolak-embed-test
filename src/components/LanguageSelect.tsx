@@ -8,11 +8,11 @@ interface Language {
 interface LanguageSelectProps {
   value: string
   onChange: (value: string) => void
-  applied: boolean
+  applied?: boolean
   languages: Language[]
 }
 
-export function LanguageSelect({ value, onChange, applied, languages }: LanguageSelectProps) {
+export function LanguageSelect({ value, onChange, applied = true, languages }: LanguageSelectProps) {
   return (
     <div className="language-select">
       <span className="language-label">Language</span>

@@ -4,10 +4,10 @@ interface ToggleSwitchProps {
   checked: boolean
   onChange: (checked: boolean) => void
   label: string
-  applied: boolean
+  applied?: boolean
 }
 
-export function ToggleSwitch({ checked, onChange, label, applied }: ToggleSwitchProps) {
+export function ToggleSwitch({ checked, onChange, label, applied = true }: ToggleSwitchProps) {
   return (
     <label className="toggle">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />

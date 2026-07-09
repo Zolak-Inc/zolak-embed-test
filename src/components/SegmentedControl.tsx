@@ -10,10 +10,10 @@ interface SegmentedControlProps<T extends string> {
   options: Option<T>[]
   value: T
   onChange: (value: T) => void
-  applied: boolean
+  applied?: boolean
 }
 
-export function SegmentedControl<T extends string>({ label, options, value, onChange, applied }: SegmentedControlProps<T>) {
+export function SegmentedControl<T extends string>({ label, options, value, onChange, applied = true }: SegmentedControlProps<T>) {
   return (
     <div className="segmented-toggle">
       <span className="segmented-label">{label}</span>

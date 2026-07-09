@@ -15,8 +15,6 @@ const CDN_PATHS = [
   'embed/embed.1.0.0.staging.js',
 ]
 const DEFAULT_CDN = CDN_BASE + 'embed/embed.dev.js'
-const defaultToken = ''
-const defaultSku = ''
 
 const LANGUAGES = [
   { value: 'en', label: 'English' },
@@ -38,7 +36,14 @@ interface ControlPanelProps {
   rtl: boolean
   language: string
   cdnUrl: string
-  onUpdate: (token: string, sku: string, sidebar: boolean, sidebarPosition: 'left' | 'right', ar: boolean, rtl: boolean, language: string) => void
+  onTokenChange: (value: string) => void
+  onSkuChange: (value: string) => void
+  onSidebarChange: (value: boolean) => void
+  onSidebarPositionChange: (value: 'left' | 'right') => void
+  onArChange: (value: boolean) => void
+  onRtlChange: (value: boolean) => void
+  onLanguageChange: (value: string) => void
+  onUpdate: () => void
   onApplyCdn: (cdnUrl: string) => void
   collapsed: boolean
   onToggleCollapse: () => void
@@ -53,31 +58,19 @@ export function ControlPanel({
   rtl,
   language,
   cdnUrl,
+  onTokenChange,
+  onSkuChange,
+  onSidebarChange,
+  onSidebarPositionChange,
+  onArChange,
+  onRtlChange,
+  onLanguageChange,
   onUpdate,
   onApplyCdn,
   collapsed,
   onToggleCollapse
 }: ControlPanelProps) {
   const [cdnInput, setCdnInput] = useState(cdnUrl || DEFAULT_CDN)
-  const [tokenInput, setTokenInput] = useState(token)
-  const [skuInput, setSkuInput] = useState(sku)
-  const [sidebarInput, setSidebarInput] = useState(sidebar)
-  const [sidebarPositionInput, setSidebarPositionInput] = useState(sidebarPosition)
-  const [arInput, setArInput] = useState(ar)
-  const [rtlInput, setRtlInput] = useState(rtl)
-  const [languageInput, setLanguageInput] = useState(language || 'en')
-
-  const handleUpdate = () => {
-    onUpdate(
-      tokenInput.trim() || defaultToken,
-      skuInput.trim() || defaultSku,
-      sidebarInput,
-      sidebarPositionInput,
-      arInput,
-      rtlInput,
-      languageInput
-    )
-  }
 
   const handleApplyCdn = () => {
     onApplyCdn(cdnInput.trim() || DEFAULT_CDN)
@@ -117,24 +110,23 @@ export function ControlPanel({
             <label className="field">
               <span>Company token</span>
               <div className="field-row">
-                <input value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} />
-                <Check size={20} className={`tick-icon${token.trim() && tokenInput.trim() === token ? '' : ' tick-icon--hidden'}`} />
+                <input value={token} onChange={(e) => onTokenChange(e.target.value)} />
+                <Check size={20} className="tick-icon" />
               </div>
             </label>
             <label className="field">
               <span>SKU</span>
               <div className="field-row">
-                <input value={skuInput} onChange={(e) => setSkuInput(e.target.value)} />
-                <Check size={20} className={`tick-icon${sku.trim() && skuInput.trim() === sku ? '' : ' tick-icon--hidden'}`} />
+                <input value={sku} onChange={(e) => onSkuChange(e.target.value)} />
+                <Check size={20} className="tick-icon" />
               </div>
             </label>
           </div>
           <div className="controls-toggles">
             <ToggleSwitch
-              checked={sidebarInput}
-              onChange={setSidebarInput}
+              checked={sidebar}
+              onChange={onSidebarChange}
               label="Sidebar"
-              applied={sidebarInput === sidebar}
             />
             <SegmentedControl
               label=""
@@ -142,30 +134,26 @@ export function ControlPanel({
                 { value: 'left', label: 'Left' },
                 { value: 'right', label: 'Right' },
               ]}
-              value={sidebarPositionInput}
-              onChange={setSidebarPositionInput}
-              applied={sidebarPositionInput === sidebarPosition}
+              value={sidebarPosition}
+              onChange={onSidebarPositionChange}
             />
             <ToggleSwitch
-              checked={arInput}
-              onChange={setArInput}
+              checked={ar}
+              onChange={onArChange}
               label="AR"
-              applied={arInput === ar}
             />
             <ToggleSwitch
-              checked={rtlInput}
-              onChange={setRtlInput}
+              checked={rtl}
+              onChange={onRtlChange}
               label="RTL"
-              applied={rtlInput === rtl}
             />
             <LanguageSelect
-              value={languageInput}
-              onChange={setLanguageInput}
-              applied={languageInput === language}
+              value={language}
+              onChange={onLanguageChange}
               languages={LANGUAGES}
             />
           </div>
-          <Button onClick={handleUpdate}>
+          <Button onClick={onUpdate}>
             Update
           </Button>
         </div>

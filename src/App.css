@@ -256,6 +256,13 @@
   width: 100%;
 }
 
+.btn-action:disabled,
+.popup-footer button:disabled {
+  opacity: 0.5;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+}
+
 .controls-body > .btn-action {
   max-width: 420px;
 }

@@ -180,6 +180,7 @@ function App() {
   const [sandboxSize, setSandboxSize] = useState({ width: 0, height: 0 })
   const [configuratorSize, setConfiguratorSize] = useState({ width: 0, height: 0 })
   const [panelCollapsed, setPanelCollapsed] = useState(false)
+  const [isDirty, setIsDirty] = useState(false)
 
 
 
@@ -240,24 +241,29 @@ function App() {
   )
 
   const handleUpdate = useCallback(async () => {
+    setIsDirty(false)
     await destroyApp((window as any).ZolakConfigurator, CONTAINER)
     await destroyApp((window as any).ZolakShowroom, SHOWROOM_CONTAINER)
     setInitialized({ configurator: false, sandbox: false })
+
   }, [])
 
-  const handleTokenChange = useCallback((v: string) => setToken(v), [])
-  const handleSkuChange = useCallback((v: string) => setSku(v), [])
-  const handleSidebarChange = useCallback((v: boolean) => setSidebar(v), [])
-  const handleSidebarPositionChange = useCallback((v: 'left' | 'right') => setSidebarPosition(v), [])
-  const handleArChange = useCallback((v: boolean) => setAr(v), [])
-  const handleRtlChange = useCallback((v: boolean) => setRtl(v), [])
-  const handleLanguageChange = useCallback((v: string) => setLanguage(v), [])
+  const handleMarkDirty = useCallback(() => setIsDirty(true), [])
+
+  const handleTokenChange = useCallback((v: string) => { setToken(v); setIsDirty(true) }, [])
+  const handleSkuChange = useCallback((v: string) => { setSku(v); setIsDirty(true) }, [])
+  const handleSidebarChange = useCallback((v: boolean) => { setSidebar(v); setIsDirty(true) }, [])
+  const handleSidebarPositionChange = useCallback((v: 'left' | 'right') => { setSidebarPosition(v); setIsDirty(true) }, [])
+  const handleArChange = useCallback((v: boolean) => { setAr(v); setIsDirty(true) }, [])
+  const handleRtlChange = useCallback((v: boolean) => { setRtl(v); setIsDirty(true) }, [])
+  const handleLanguageChange = useCallback((v: string) => { setLanguage(v); setIsDirty(true) }, [])
 
   const handleApplyCdn = useCallback(async (newCdn: string) => {
     await destroyApp((window as any).ZolakConfigurator, CONTAINER)
     await destroyApp((window as any).ZolakShowroom, SHOWROOM_CONTAINER)
     setInitialized({ configurator: false, sandbox: false })
     setCdnUrl(newCdn)
+    setIsDirty(true)
   }, [])
 
   return (
@@ -271,6 +277,7 @@ function App() {
         rtl={rtl}
         language={language}
         cdnUrl={cdnUrl}
+        isDirty={isDirty}
         onTokenChange={handleTokenChange}
         onSkuChange={handleSkuChange}
         onSidebarChange={handleSidebarChange}
@@ -280,6 +287,7 @@ function App() {
         onLanguageChange={handleLanguageChange}
         onUpdate={handleUpdate}
         onApplyCdn={handleApplyCdn}
+        onMarkDirty={handleMarkDirty}
         collapsed={panelCollapsed}
         onToggleCollapse={() => setPanelCollapsed((c) => !c)}
       />

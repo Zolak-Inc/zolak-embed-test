@@ -1,5 +1,5 @@
 import { Maximize2, Minimize2 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from './components/Button'
 import { ToggleSwitch } from './components/ToggleSwitch'
 import { SegmentedControl } from './components/SegmentedControl'
@@ -45,6 +45,8 @@ interface ControlPanelProps {
   onLanguageChange: (value: string) => void
   onUpdate: () => void
   onApplyCdn: (cdnUrl: string) => void
+  onMarkDirty: () => void
+  isDirty: boolean
   collapsed: boolean
   onToggleCollapse: () => void
 }
@@ -67,14 +69,25 @@ export function ControlPanel({
   onLanguageChange,
   onUpdate,
   onApplyCdn,
+  onMarkDirty,
+  isDirty,
   collapsed,
   onToggleCollapse
 }: ControlPanelProps) {
   const [cdnInput, setCdnInput] = useState(cdnUrl || DEFAULT_CDN)
 
+  const handleCdnInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCdnInput(e.target.value)
+    onMarkDirty()
+  }
+
   const handleApplyCdn = () => {
     onApplyCdn(cdnInput.trim() || DEFAULT_CDN)
   }
+
+  useEffect(() => {
+    console.log(isDirty)
+  }, [isDirty])
 
   return (
     <section className={`controls-panel${collapsed ? ' controls-panel--collapsed' : ''}`}>
@@ -93,7 +106,7 @@ export function ControlPanel({
                 <input
                   list="cdn-list"
                   value={cdnInput}
-                  onChange={(e) => setCdnInput(e.target.value)}
+                  onChange={handleCdnInputChange}
                 />
               </div>
               <datalist id="cdn-list">
@@ -151,7 +164,7 @@ export function ControlPanel({
               languages={LANGUAGES}
             />
           </div>
-          <Button onClick={onUpdate}>
+          <Button onClick={onUpdate} disabled={!isDirty}>
             Update
           </Button>
         </div>
